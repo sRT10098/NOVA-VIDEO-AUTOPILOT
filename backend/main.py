@@ -3,6 +3,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 app = FastAPI(title="NOVA Video Autopilot", version="0.1.0")
@@ -15,6 +16,11 @@ class JobRequest(BaseModel):
     language: str = Field(default="English", max_length=40)
     target_minutes: int = Field(default=5, ge=1, le=60)
     style: str = Field(default="documentary", max_length=80)
+
+
+@app.get("/", include_in_schema=False)
+def dashboard():
+    return FileResponse(Path(__file__).resolve().parent.parent / "frontend" / "index.html")
 
 
 @app.get("/health")
