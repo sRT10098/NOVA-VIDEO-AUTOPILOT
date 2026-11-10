@@ -31,7 +31,7 @@ function overlay(ctx,w,h){const txt=$('caption').value.trim();if(!txt)return;con
 async function loadVisual(f){const u=URL.createObjectURL(f);if(f.type.startsWith('image/')){const im=new Image();im.src=u;await im.decode();return{kind:'image',el:im,url:u}}const v=document.createElement('video');v.src=u;v.muted=true;v.playsInline=true;await new Promise((res,rej)=>{v.onloadedmetadata=res;v.onerror=rej});return{kind:'video',el:v,url:u}}
 let loaded=[];
 async function prepare(){loaded=[];for(const f of files){loaded.push(await loadVisual(f))}return loaded}
-function paint(item,t=0){const c=setupCanvas(),ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.fillStyle='#05060a';ctx.fillRect(0,0,w,h);if(item){let scale=1;if($('motion').value==='ken')scale=1.03+Math.min(.045,t*.006);fit(ctx,item.el,w,h,scale)}overlay(ctx,w,h)}
+function paint(item,t=0){const c=$('canvas'),ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.fillStyle='#05060a';ctx.fillRect(0,0,w,h);if(item){let scale=1;if($('motion').value==='ken')scale=1.03+Math.min(.045,t*.006);fit(ctx,item.el,w,h,scale)}overlay(ctx,w,h)}
 function drawFirst(){if(!files.length){paint(null);return}prepare().then(a=>paint(a[0])).catch(()=>{})}
 $('preview').onclick=()=>{if(!files.length){show('اول تصویر یا کلیپ انتخاب کن.',true);return}prepare().then(a=>paint(a[0])).catch(e=>show('فایل باز نشد: '+e.message,true))};
 function show(msg,bad=false){const s=$('status');s.style.display='block';s.className='status'+(bad?' bad':'');s.textContent=msg}
