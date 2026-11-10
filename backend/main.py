@@ -36,11 +36,14 @@ def dashboard():
 
 @app.get("/health")
 def health():
+    data_dir = Path(os.getenv("PIPER_DATA_DIR", ROOT / "models")).resolve()
+    fa_voice = os.getenv("PIPER_FA_VOICE", "fa_IR-amir-medium")
+    tts_ready = (data_dir / f"{fa_voice}.onnx").is_file() and (data_dir / f"{fa_voice}.onnx.json").is_file()
     return {
         "status": "ok",
         "service": "NOVA",
         "version": "0.2.0",
-        "tts_ready": bool(os.getenv("PIPER_DATA_DIR") and Path(os.getenv("PIPER_DATA_DIR", "")).is_dir()),
+        "tts_ready": tts_ready,
     }
 
 
