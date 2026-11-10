@@ -1,17 +1,39 @@
-# NOVA free audio components
+# NOVA free audio stack
 
-## Current browser MVP
-- Narration preview: Web Speech API SpeechSynthesis. Uses voices available on the visitor's device/browser; language and voice quality vary. It is playback only and is not embedded in the exported WebM.
-- Background score: generated procedurally with the Web Audio API. No copyrighted track is bundled. The generated soundtrack is recorded as an audio track in the WebM export.
-- Video output: WebM through MediaRecorder; not MP4.
+## Browser MVP
+- Preview voice: Web Speech API. This only plays through the device and cannot be captured as a portable audio file.
+- Background score: generated procedurally with Web Audio API and recorded in the WebM.
+- Video container: WebM via MediaRecorder. MP4 export is not implemented yet.
 
-## Free media sources for a later asset-library integration
-- Pixabay audio: free use under Pixabay Content License, subject to prohibited uses and full license terms. Do not mirror/rehost catalog files or treat standalone redistribution as allowed. See https://pixabay.com/service/license-summary/ and https://pixabay.com/service/faq/
-- Mixkit: review the license on each asset page before including an asset, especially commercial-use restrictions.
-- Freesound: check each individual sound license; prefer CC0 or CC-BY and preserve attribution metadata. Avoid CC-BY-NC for monetized videos.
+## Embedded narration (Piper)
+NOVA now has a server endpoint at `POST /api/tts`. It generates a WAV file with Piper; the browser decodes that file and records the narrator together with the procedural score and canvas video.
 
-## Later server-side voice option
-Piper is a free, self-hostable neural TTS option. The original rhasspy/piper repository is archived; active development moved to OHF-Voice/piper1-gpl. Review the engine and each voice/model license before redistribution or commercial use:
-https://github.com/OHF-Voice/piper1-gpl
+Install Python dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-No external paid API, API key, account, or subscription is required for the current browser audio features.
+Download a Persian voice into the server's `models` directory:
+```bash
+python -m piper.download_voices fa_IR-amir-medium --data-dir models
+```
+The Persian Amir model card identifies the training dataset license as CC0. Review the engine license and each model card before commercial redistribution. Official voice catalogue: https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/VOICES.md
+
+For English, download:
+```bash
+python -m piper.download_voices en_US-lessac-medium --data-dir models
+```
+
+Environment settings:
+- `PIPER_DATA_DIR=models` (directory containing both ONNX model and matching JSON)
+- `PIPER_FA_VOICE=fa_IR-amir-medium`
+- `PIPER_EN_VOICE=en_US-lessac-medium`
+
+The web app and API must be served by the same FastAPI origin (or a reverse proxy must route `/api` to FastAPI). GitHub Pages alone is static hosting and cannot run this Python endpoint. Backend deployment and end-to-end recording are not yet verified.
+
+## Free asset sources for a future library
+- Pixabay audio: free use under Pixabay Content License, subject to prohibited uses and full terms: https://pixabay.com/service/license-summary/
+- Mixkit: check the individual asset page license before use.
+- Freesound: check each asset license; prefer CC0 or CC-BY and preserve attribution. Avoid CC-BY-NC for monetized videos.
+
+No paid TTS API or API key is used by this implementation.
