@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090b12"><title>NOVA • Video Autopilot</title>
+<style>
+:root{color-scheme:dark;--bg:#090b12;--panel:#111522;--line:#252b3b;--muted:#9ba4b8;--text:#f4f6fb;--accent:#a78bfa;--accent2:#6ee7d8}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% 0%,#292044 0,transparent 38%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+main{width:min(760px,100%);margin:auto;padding:28px 18px 56px}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:38px}.brand{font-weight:850;letter-spacing:3px;font-size:23px}.brand span{color:var(--accent)}.status{font-size:12px;color:var(--accent2);border:1px solid #28534f;padding:7px 11px;border-radius:30px}
+.hero{margin-bottom:25px}.eyebrow{color:var(--accent);font-size:12px;letter-spacing:2px;font-weight:700}.hero h1{font-size:clamp(30px,8vw,48px);line-height:1.2;margin:10px 0}.hero p{color:var(--muted);line-height:1.9;margin:0}
+.panel{background:linear-gradient(145deg,#151a2a,#101420);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 18px 60px #0005}
+label{display:block;font-size:13px;font-weight:700;margin:17px 0 8px}input,select,textarea{width:100%;border:1px solid #30384b;border-radius:12px;background:#0b0f19;color:var(--text);padding:14px;font:inherit;outline:none}textarea{min-height:110px;resize:vertical;line-height:1.8}input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hint{font-size:11px;color:var(--muted);line-height:1.7;margin-top:7px}
+button{width:100%;margin-top:22px;border:0;border-radius:13px;padding:15px;background:linear-gradient(100deg,var(--accent),#7c9cff);color:#0b0d16;font-weight:850;font-size:15px;cursor:pointer}button:disabled{opacity:.55;cursor:wait}
+.result{display:none;margin-top:18px;padding:15px;border:1px solid #28534f;border-radius:14px;background:#10201f;line-height:1.9;font-size:13px;overflow-wrap:anywhere}.result.error{border-color:#75404b;background:#24151a}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:22px}.step{border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;color:var(--muted);font-size:11px}.step b{display:block;color:var(--text);font-size:17px;margin-bottom:5px}.foot{text-align:center;color:#727c91;font-size:11px;margin-top:20px}
+@media(max-width:520px){main{padding:20px 14px 40px}.grid{grid-template-columns:1fr}.panel{padding:17px}.steps{grid-template-columns:1fr 1fr}}
+</style></head>
+<body><main>
+<header class="top"><div class="brand">N<span>Ø</span>VA</div><div class="status">● ON-DEMAND MODE</div></header>
+<section class="hero"><div class="eyebrow">AI VIDEO WORKFLOW</div><h1>ایده‌ات را به ویدیو تبدیل کن.</h1><p>موضوع را وارد کن تا NOVA یک پروژه تولید ویدیو برایت بسازد. فعلاً این نسخه brief را ثبت و آماده‌سازی می‌کند؛ هنوز تولید خودکار تصویر، صدا و MP4 فعال نیست.</p></section>
+<section class="panel"><form id="jobForm">
+<label for="topic">موضوع ویدیو</label><textarea id="topic" required minlength="3" maxlength="500" placeholder="مثلاً: رازهای پشت لبخند شخصیت بادی در یک مستند ترسناک..."></textarea>
+<div class="grid"><div><label for="language">زبان خروجی</label><select id="language"><option>Persian</option><option>English</option></select></div><div><label for="minutes">مدت ویدیو</label><select id="minutes"><option value="1">۱ دقیقه</option><option value="3">۳ دقیقه</option><option value="5" selected>۵ دقیقه</option><option value="8">۸ دقیقه</option><option value="10">۱۰ دقیقه</option></select></div></div>
+<label for="style">سبک تولید</label><select id="style"><option value="documentary">مستند سینمایی</option><option value="mystery">معمایی و رازآلود</option><option value="horror">تحلیل ترسناک</option><option value="educational">آموزشی</option><option value="storytelling">داستان‌گویی</option></select>
+<div class="hint">در این نسخه هیچ API پولی یا سرویس خارجی فراخوانی نمی‌شود و پروژه فقط در سرور ثبت می‌شود.</div>
+<button id="submit" type="submit">ساخت پروژه جدید ↗</button></form><div id="result" class="result" role="status"></div></section>
+<section class="steps"><div class="step"><b>01</b>ایده و تحقیق</div><div class="step"><b>02</b>سناریو و راوی</div><div class="step"><b>03</b>تصویر و صدا</div><div class="step"><b>04</b>تدوین و خروجی</div></section>
+<div class="foot">NOVA VIDEO AUTOPILOT • EARLY BUILD 0.1</div>
+</main>
+<script>
+const form=document.getElementById('jobForm'),btn=document.getElementById('submit'),box=document.getElementById('result');
+form.addEventListener('submit',async e=>{e.preventDefault();btn.disabled=true;btn.textContent='در حال ثبت پروژه...';box.className='result';box.style.display='block';box.textContent='در حال ارتباط با هسته NOVA...';
+try{const r=await fetch('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:document.getElementById('topic').value,language:document.getElementById('language').value,target_minutes:Number(document.getElementById('minutes').value),style:document.getElementById('style').value})});const data=await r.json();if(!r.ok)throw new Error(data.detail||'خطا در ثبت پروژه');box.innerHTML='<strong>پروژه با موفقیت ثبت شد ✓</strong><br>شناسه: <code></code><br>وضعیت: '+data.status+'<br><small>این مرحله فقط brief را ذخیره می‌کند؛ تولید رسانه در مرحله بعد اضافه می‌شود.</small>';box.querySelector('code').textContent=data.id;
+}catch(err){box.className='result error';box.textContent='ارتباط برقرار نشد: '+err.message+' — مطمئن شو سرویس NOVA اجرا شده است.'}finally{btn.disabled=false;btn.textContent='ساخت پروژه جدید ↗'}});
+</script></body></html>
